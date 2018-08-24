@@ -49,6 +49,8 @@ export class UserService {
         });
     }
 
+    // check whether i'm signed in
+
     public isUserSignedIn(): boolean {
         return !_.isEmpty(sessionStorage.getItem(UserService.SESSION_STORAGE_KEY));
     }
