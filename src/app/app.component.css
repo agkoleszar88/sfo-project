@@ -1,0 +1,13 @@
+.highlight{
+    background: lightgray; /* green */
+  }
+
+  .example-card {
+    max-width: 500px;
+  }
+  
+  .example-header-image {
+    background-image: url('https://material.angular.io/assets/img/examples/shiba1.jpg');
+    background-size: cover;
+  }
+  
