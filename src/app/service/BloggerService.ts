@@ -88,7 +88,7 @@ public getPosts(authtoken: string,id : string,maxSize: string): Observable<Posts
   
 }
 
-public getPost(authtoken: string,id : string,postId: string): Observable<PostWithContent> {
+public getPost(authtoken: string,blogId : string,postId: string): Observable<PostWithContent> {
 
   if (!authtoken)
   {
@@ -99,15 +99,43 @@ public getPost(authtoken: string,id : string,postId: string): Observable<PostWit
   console.log ('load post: '  + new Date().toString());
 
 
-  let url = this.BLOGGER_API_URL+id+'/posts/'+postId;
+  let url = this.BLOGGER_API_URL+blogId+'/posts/'+postId;
   console.log(url);
 
 
   return this.http.get<PostWithContent>(url, {
     headers: new HttpHeaders({
-          Authorization: `Bearer ${authtoken}`
+          'Authorization':'Bearer '+authtoken
+
       })
   });
+  
+}
+
+public updatePost(authtoken: string, post: Post): Observable<PostWithContent> {
+
+  if (!authtoken)
+  {
+    console.log('dont do call is no bearer token');
+    return null;
+  }
+
+  console.log ('update post: '  + new Date().toString());
+
+  console.log (JSON.stringify(post));
+
+
+  let url = this.BLOGGER_API_URL+post.blog.id+'/posts/'+post.id;
+  console.log(url);
+
+  return this.http.put<PostWithContent>(url, JSON.stringify(post), {
+    headers: new HttpHeaders({
+      'Authorization':'Bearer '+authtoken,
+      'Content-Type':'application/json'
+
+
+  })
+});
   
 }
 

@@ -6,6 +6,9 @@ import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {CdkTableModule} from '@angular/cdk/table';
 import { FlexLayoutModule } from "@angular/flex-layout";
+import { NgxEditorModule } from 'ngx-editor';
+import {AngularFontAwesomeModule} from 'angular-font-awesome';
+
 import {
   
   MatAutocompleteModule,
@@ -72,6 +75,7 @@ import { BloggerService } from './service/BloggerService';
     FlexLayoutModule,
     BrowserAnimationsModule,
     FormsModule,
+    NgxEditorModule,
     CdkTableModule,
     MatAutocompleteModule,
     MatBadgeModule,
@@ -108,8 +112,8 @@ import { BloggerService } from './service/BloggerService';
     MatToolbarModule,
     MatTooltipModule,
     MatTreeModule,
-
     HttpClientModule,
+    AngularFontAwesomeModule,
     GoogleApiModule.forRoot({
       provide: NG_GAPI_CONFIG,
       useValue: gapiClientConfig

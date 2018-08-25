@@ -1,5 +1,6 @@
 
 
+<link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
 <mat-toolbar color="primary">
         <button style="width:100px;" mat-stroked-button  mat-button *ngIf="!isLoggedIn()" (click)="doLogin()" >Login</button>
         <button  style="width:100px;" mat-stroked-button mat-button *ngIf="isLoggedIn()" (click)="doLogout()" >Logout</button>
@@ -9,8 +10,6 @@
   <br/>
       <br/>
 
-
-     
 
   <div *ngIf="isLoggedIn() && blogs">
 
@@ -130,21 +129,33 @@
               
                   <mat-card-content>
 
-                      <div style="overflow:scroll; height:400px;" [innerHTML]="post.content"></div>
+                      <app-ngx-editor style="max-height:600px" [config]="editorConfig" [spellcheck]="true" [(ngModel)]="post.content"></app-ngx-editor>
 
-  
+
                   </mat-card-content>
                   <mat-card-actions>
-                    <button mat-button>LIKE</button>
-                    <button mat-button>SHARE</button>
+                    <button (click)="updatePost(post)" mat-button>Save</button>
                   </mat-card-actions>
                 </mat-card>
+
+               
+          
+ 
               
               </div>
             </div>
-            </div>
 
 
+  
+         
+      </div>
+
+
+
+
+          
+
+  
       
 
 

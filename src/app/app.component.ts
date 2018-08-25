@@ -45,6 +45,23 @@ export class AppComponent {
   blog: Blog;
   post: PostWithContent;
   postContent: SafeHtml;
+
+  editorConfig = {
+    editable: true,
+    spellcheck: false,
+    height: '10rem',
+    minHeight: '5rem',
+    placeholder: 'Type something. Test the Editor... ヽ(^。^)丿',
+    translate: 'no'
+  };
+
+  constructor(private userService: UserService,
+    private gapiService: GoogleApiService,private bs : BloggerService, private googleAuthService: GoogleAuthService,private sanitizer: DomSanitizer){
+  // First make sure gapi is loaded can be in AppInitilizer
+  this.gapiService.onLoad().subscribe();
+  this.dataSource = new MatTableDataSource(null);
+ 
+  }
   
   
   get blogs(): Blogs {
@@ -64,17 +81,6 @@ export class AppComponent {
     this._blogs = blogs;
   }
 
-
-
-  constructor(private userService: UserService,
-    private gapiService: GoogleApiService,private bs : BloggerService, private googleAuthService: GoogleAuthService,private sanitizer: DomSanitizer){
-  // First make sure gapi is loaded can be in AppInitilizer
-  this.gapiService.onLoad().subscribe();
-  this.dataSource = new MatTableDataSource(null);
- 
-  
-  }
-
   selectedRowIndex: number = -1;
 
   highlight(row){
@@ -88,6 +94,7 @@ export class AppComponent {
     return this.userService.isUserSignedIn();
   
   }
+
 
 
   public doLogin() {
@@ -144,6 +151,17 @@ export class AppComponent {
       let res: SafeHtml  = this.sanitizer.bypassSecurityTrustHtml (content);
       return res;
 
+    }
+
+    public updatePost (post: Post) {
+
+      console.log('starting to update post: '+post.id);
+      
+      this.bs.updatePost(this.userService.getToken(),post).subscribe((res=>{
+        console.log(res);
+
+      }));
+      
     }
 
     public getPost(id: string,postId: string) {
