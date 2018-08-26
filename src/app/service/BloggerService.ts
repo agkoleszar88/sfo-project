@@ -112,7 +112,7 @@ public getPost(authtoken: string,blogId : string,postId: string): Observable<Pos
   
 }
 
-public updatePost(authtoken: string, post: Post): Observable<PostWithContent> {
+public updatePost(authtoken: string, post: PostWithContent): Observable<PostWithContent> {
 
   if (!authtoken)
   {
@@ -133,7 +133,64 @@ public updatePost(authtoken: string, post: Post): Observable<PostWithContent> {
       'Authorization':'Bearer '+authtoken,
       'Content-Type':'application/json'
 
+  })
+});
+  
+}
 
+public deletePost(authtoken: string, post: PostWithContent): Observable<any> {
+
+  if (!authtoken)
+  {
+    console.log('dont do call is no bearer token');
+    return null;
+  }
+
+  console.log ('delete post id: '  + post.id + ' ' + new Date().toString());
+
+  console.log (JSON.stringify(post));
+
+
+  let url = this.BLOGGER_API_URL+post.blog.id+'/posts/'+post.id;
+  console.log(url);
+
+  return this.http.delete<any>(url, {
+    headers: new HttpHeaders({
+      'Authorization':'Bearer '+authtoken,
+      'Content-Type':'application/json'
+
+  })
+});
+  
+}
+
+public createPost(authtoken: string, post: PostWithContent): Observable<PostWithContent> {
+
+  if (!authtoken)
+  {
+    console.log('dont do call is no bearer token');
+    return null;
+  }
+
+
+ 
+  let url = this.BLOGGER_API_URL+post.blog.id+'/posts';
+  console.log(url);
+
+  return this.http.post<PostWithContent>(url, `
+  {
+    "kind": "blogger#post",
+    "blog": {
+      "id": "${post.blog.id}"
+    },
+    "title": "${post.title}",
+    "content": "${post.content}"
+  }
+  `,
+    {
+    headers: new HttpHeaders({
+      'Authorization':'Bearer '+authtoken,
+      'Content-Type':'application/json'
   })
 });
   
@@ -168,6 +225,14 @@ export interface Post {
 
 }
 
+export interface NewPost {
+  kind: string;
+  blog: Blog;
+  title: string;
+  content: string;
+
+}
+
 export interface PostWithContent extends Post {
   content: string;
 }
@@ -196,27 +261,7 @@ export interface Blog {
   updated: string;
   posts: Posts;
 
-  /*
-  "kind": "blogger#blog",
-  "id": "2399953",
-  "name": "Blogger Buzz",
-  "description": "The Official Buzz from Blogger at Google",
-  "published": "2007-04-23T22:17:29.261Z",
-  "updated": "2011-08-02T06:01:15.941Z",
-  "url": "http://buzz.blogger.com/",
-  "selfLink": "https://www.googleapis.com/blogger/v3/blogs/2399953",
-  "posts": {
-    "totalItems": 494,
-    "selfLink": "https://www.googleapis.com/blogger/v3/blogs/2399953/posts"
-  },
-  "pages": {
-    "totalItems": 2,
-    "selfLink": "https://www.googleapis.com/blogger/v3/blogs/2399953/pages"
-  },
-  "locale": {
-    "language": "en",
-    "country": "",
-    "variant": ""
-  }
-  */
+  
 }
+
+

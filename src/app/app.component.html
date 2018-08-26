@@ -40,7 +40,8 @@
   Number of posts: &nbsp;
   {{blog.posts.totalItems}} <br/><br/>
 
-  
+      <button (click)="createNewPost()" mat-flat-button>New</button>
+ 
 
      <div *ngIf="isLoggedIn() && !blog">
 
@@ -76,9 +77,7 @@
       
       <table mat-table [dataSource]="dataSource" matSort class="mat-elevation-z8">
 
-          
-
-       
+        
 
           <!--- Note that these columns can be defined in any order.
                 The actual rendered columns are set as a property on the row definition" -->
@@ -115,27 +114,33 @@
 </div>
 
 
-
   <div fxFlex="50%">
-            <div  *ngIf="isLoggedIn() && post">
-
-                
+            <div  *ngIf="isLoggedIn() && post">            
    
-                <mat-card class="example-card" *ngIf="panel">
+                <mat-card class="example-card">
                   <mat-card-header>
-                    <mat-card-title> {{panel.blog}}</mat-card-title>
-                    <mat-card-subtitle>{{panel.post}}</mat-card-subtitle>
+                    <mat-card-title> {{blog.name}}</mat-card-title>
+
                   </mat-card-header>
               
                   <mat-card-content>
 
+                      <div class="fields-container">
+                          <mat-form-field>
+                            <input matInput placeholder="Title" [(ngModel)]="post.title"/>
+                            </mat-form-field>
+     
+                    
+                        </div>
                       <app-ngx-editor style="max-height:600px" [config]="editorConfig" [spellcheck]="true" [(ngModel)]="post.content"></app-ngx-editor>
 
 
                   </mat-card-content>
                   <mat-card-actions>
-                    <button (click)="updatePost(post)" mat-button>Save</button>
-                  </mat-card-actions>
+                      <button (click)="openSaveDialog()" mat-button>Save</button>
+                      <button (click)="openDeleteDialog()" mat-button>Delete</button>
+                    </mat-card-actions>
+                
                 </mat-card>
 
                

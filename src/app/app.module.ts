@@ -8,6 +8,7 @@ import {CdkTableModule} from '@angular/cdk/table';
 import { FlexLayoutModule } from "@angular/flex-layout";
 import { NgxEditorModule } from 'ngx-editor';
 import {AngularFontAwesomeModule} from 'angular-font-awesome';
+import { PerformActionDialog } from './app.component';
 
 import {
   
@@ -67,8 +68,10 @@ import { BloggerService } from './service/BloggerService';
 
 
 @NgModule({
+
+  entryComponents: [AppComponent, PerformActionDialog],
   declarations: [
-    AppComponent
+    AppComponent,PerformActionDialog
   ],
   imports: [
     BrowserModule,
@@ -158,7 +161,6 @@ import { BloggerService } from './service/BloggerService';
     MatTreeModule
   ],
  
-
 
   providers: [UserService, BloggerService],
   bootstrap: [AppComponent],

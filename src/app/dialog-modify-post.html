@@ -1,0 +1,7 @@
+<div mat-dialog-content>
+  <p>Press 'OK' to continue to {{action}} your post</p>
+</div>
+<div mat-dialog-actions>
+  <button mat-button (click)="cancelAction()">No Thanks</button>
+  <button mat-button (click)="performAction()" cdkFocusInitial>Ok</button>
+</div>

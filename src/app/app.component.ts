@@ -1,4 +1,4 @@
-import { Component, ViewChild} from '@angular/core';
+import { Component, Inject, EventEmitter, ViewChild} from '@angular/core';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import {
   GoogleApiService, GoogleAuthService, 
@@ -7,8 +7,12 @@ import {
 
 import { UserService } from './service/gapi-service';
 import { BloggerService,Blogs,Blog,Post, PostWithContent } from './service/BloggerService';
-import { MatTableDataSource, MatPaginator, MatSort} from '@angular/material';
+import { MatSnackBar,MatTableDataSource, MatPaginator, MatSort} from '@angular/material';
+import { MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material';
 
+export interface DialogData {
+  action: string;
+}
 
 
 
@@ -19,8 +23,6 @@ import { MatTableDataSource, MatPaginator, MatSort} from '@angular/material';
 })
 export class AppComponent {
 
-  panel =
-    { blog: "Blog", post: "Post" };
 
   private paginator: MatPaginator;
   private sort: MatSort;
@@ -55,12 +57,54 @@ export class AppComponent {
     translate: 'no'
   };
 
-  constructor(private userService: UserService,
+  constructor(public dialog: MatDialog,public snackBar: MatSnackBar,private userService: UserService,
     private gapiService: GoogleApiService,private bs : BloggerService, private googleAuthService: GoogleAuthService,private sanitizer: DomSanitizer){
   // First make sure gapi is loaded can be in AppInitilizer
   this.gapiService.onLoad().subscribe();
   this.dataSource = new MatTableDataSource(null);
  
+  }
+
+  openSaveDialog(): void {
+    const dialogRef = this.dialog.open(PerformActionDialog, {
+      data :{'action':'Save'},
+      width: '250px'
+    });
+
+
+    const sub = dialogRef.componentInstance.onPerformAction.subscribe(() => {
+
+    console.log ('must save post');
+    this.updatePost(this.post);
+
+  });
+
+  dialogRef.afterClosed().subscribe(() => {
+    dialogRef.componentInstance.onPerformAction.unsubscribe();
+  // unsubscribe onAdd
+  });
+
+  }
+
+  openDeleteDialog(): void {
+    const dialogRef = this.dialog.open(PerformActionDialog, {
+      data :{'action':'Delete'},
+      width: '250px'
+    });
+
+
+    const sub = dialogRef.componentInstance.onPerformAction.subscribe(() => {
+
+    console.log ('must cancel post');
+    this.deletePost(this.post);
+
+  });
+
+  dialogRef.afterClosed().subscribe(() => {
+    dialogRef.componentInstance.onPerformAction.unsubscribe();
+  // unsubscribe onAdd
+  });
+
   }
   
   
@@ -95,8 +139,6 @@ export class AppComponent {
   
   }
 
-
-
   public doLogin() {
     console.log('logging in');
     this.userService.signIn();
@@ -105,6 +147,8 @@ export class AppComponent {
 
   public doLogout() {
     this.blogs = null;
+    this.blog = null;
+    this.post = null;
     this.dataSource.data = null;
 
     console.log ('logging out');
@@ -122,7 +166,6 @@ export class AppComponent {
 
   public getBlogs() {
 
-
       console.log ('loading blogs');
      this.bs.getBlogs(this.userService.getToken()).subscribe ((res)=>{
         this._blogs = res;
@@ -133,7 +176,6 @@ export class AppComponent {
 
   public getPosts(id: string, maxSize: string) {
 
-  
         console.log ('loading posts');
        this.bs.getPosts(this.userService.getToken(),id,maxSize).subscribe ((res)=>{
    
@@ -145,20 +187,59 @@ export class AppComponent {
 
     }
 
-    public sanitizePostContent(content: string): SafeHtml {
 
-      console.log ('sanitizing content');
-      let res: SafeHtml  = this.sanitizer.bypassSecurityTrustHtml (content);
-      return res;
+    public updatePost (post: PostWithContent) {
 
-    }
-
-    public updatePost (post: Post) {
+      if (this.post.id != null && this.post.id !=  "")
+      {
 
       console.log('starting to update post: '+post.id);
       
       this.bs.updatePost(this.userService.getToken(),post).subscribe((res=>{
+        this.snackBar.open('succesfully updated post', null, {
+          duration: 2000,
+        });
         console.log(res);
+  
+
+        this.getPosts (this.blog.id,this.blog.posts.totalItems);
+
+      }));
+      }
+      else
+      {
+
+        console.log('starting to create new post: ');
+      
+        this.bs.createPost(this.userService.getToken(),post).subscribe((res=>{
+        this.snackBar.open('succesfully created post', null, {
+          duration: 2000,
+        });
+        console.log(res);
+  
+
+        this.getPosts (this.blog.id,this.blog.posts.totalItems);
+
+      }));
+
+      }
+
+      
+    }
+
+    public deletePost (post : PostWithContent) {
+
+     
+      console.log('starting to delete post: '+post.id);
+      
+      this.bs.deletePost(this.userService.getToken(),post).subscribe((res=>{
+        this.snackBar.open('succesfully deleted post', null, {
+          duration: 2000,
+        });
+        console.log(res);
+  
+        this.post = null;
+        this.getPosts (this.blog.id,this.blog.posts.totalItems);
 
       }));
       
@@ -166,19 +247,13 @@ export class AppComponent {
 
     public getPost(id: string,postId: string) {
 
-
-    
           console.log ('loading post');
            this.bs.getPost(this.userService.getToken(),id,postId).subscribe ((res)=>{
             this.post = res;
-            this.postContent = this.sanitizePostContent (res.content);
-            this.panel.post = res.title;
-            this.panel.blog = this.blog.name;
-
-          
+            console.log (this.post);
+     
           });
-    
-    
+      
       }
 
     public getBlog(id: string) {
@@ -202,6 +277,29 @@ export class AppComponent {
     
       }
 
+      public createNewPost ()
+      {
+
+        this.post = {
+          author: {id:"",
+          displayName:"",
+          url:""},
+          id: "",
+          published:"",
+          updated:"",
+          url:"",
+          selfLink:"",
+          kind: "blogger#post",
+          title: "",
+          content: "" ,
+          replies: {totalItems:0,selfLink:""},
+          blog: <Blog>{id:this.blog.id}
+          };
+
+          this.selectedRowIndex = -1;
+
+      }
+
         /**
    * Set the paginator and sort after the view init since this component will
    * be able to query its view for the initialized paginator and sort.
@@ -222,6 +320,38 @@ export class AppComponent {
     this.dataSource.sort = this.sort;
 
   }
+}
+
+@Component({
+  selector: 'dialog-modify-post',
+  templateUrl: 'dialog-modify-post.html',
+})
+export class PerformActionDialog {
+
+  action: string;
+
+  constructor(
+
+    private dialogRef: MatDialogRef<AppComponent>,
+    @Inject(MAT_DIALOG_DATA) data) {
+      this.action = data.action;
+
+  }
+
+    onPerformAction = new EventEmitter();
+
+    cancelAction(): void {
+      console.debug ('not performing action');
+      this.dialogRef.close();
+    }
+
+    performAction(): void {
+      console.debug ('performing action');
+      this.onPerformAction.emit();
+      this.dialogRef.close();
+    
+  }
+
 }
 
 
