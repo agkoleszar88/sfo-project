@@ -16,36 +16,18 @@ export class BloggerService {
 
 
   
-  public getBlogs(authtoken: string): Observable<Blogs> {
-
-    if (!authtoken)
-    {
-      console.log('dont do call is no bearer token');
-      return null;
-    }
+  public getBlogs(): Observable<Blogs> {
 
     console.log ('load blogs at time: '  + new Date().toString());
 
 
     let url = 'https://www.googleapis.com/blogger/v3/users/self/blogs';
     console.log(url);
-
-
-    return this.http.get<Blogs>(url, {
-      headers: new HttpHeaders({
-            Authorization: `Bearer ${authtoken}`
-        })
-    });
-    
+    return this.http.get<Blogs>(url); 
 }
 
-public getBlog(authtoken: string,id : string): Observable<Blog> {
+public getBlog(id : string): Observable<Blog> {
 
-  if (!authtoken)
-  {
-    console.log('dont do call is no bearer token');
-    return null;
-  }
 
   console.log ('load blog at time: '  + new Date().toString());
 
@@ -54,11 +36,7 @@ public getBlog(authtoken: string,id : string): Observable<Blog> {
   console.log(url);
 
 
-  return this.http.get<Blog>(url, {
-    headers: new HttpHeaders({
-          Authorization: `Bearer ${authtoken}`
-      })
-  });
+  return this.http.get<Blog>(url);
   
 }
 
@@ -88,13 +66,9 @@ public getPosts(authtoken: string,id : string,maxSize: string): Observable<Posts
   
 }
 
-public getPost(authtoken: string,blogId : string,postId: string): Observable<PostWithContent> {
+public getPost(blogId : string,postId: string): Observable<PostWithContent> {
 
-  if (!authtoken)
-  {
-    console.log('dont do call is no bearer token');
-    return null;
-  }
+ 
 
   console.log ('load post: '  + new Date().toString());
 
@@ -103,12 +77,7 @@ public getPost(authtoken: string,blogId : string,postId: string): Observable<Pos
   console.log(url);
 
 
-  return this.http.get<PostWithContent>(url, {
-    headers: new HttpHeaders({
-          'Authorization':'Bearer '+authtoken
-
-      })
-  });
+  return this.http.get<PostWithContent>(url);
   
 }
 

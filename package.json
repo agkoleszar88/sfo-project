@@ -38,6 +38,8 @@
     "ng-gapi": "0.0.51",
     "ngx-bootstrap": "^3.0.1",
     "ngx-editor": "^3.3.0",
+    "npm": "^6.4.0",
+    "npm-install-missing": "^0.1.4",
     "rxjs": "^6.0.0",
     "save": "^2.3.2",
     "zone.js": "~0.8.26"

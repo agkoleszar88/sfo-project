@@ -1,16 +1,20 @@
 import { BrowserModule, DomSanitizer } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { AppComponent } from './app.component';
+import { HomeComponent } from './home/home.component';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {CdkTableModule} from '@angular/cdk/table';
 import { FlexLayoutModule } from "@angular/flex-layout";
 import { NgxEditorModule } from 'ngx-editor';
 import {AngularFontAwesomeModule} from 'angular-font-awesome';
-import { PerformActionDialog } from './app.component';
+import { PerformActionDialog } from './home/home.component';
 import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
-import { PostCarouselConfig } from './post-carousel';
+import { LoginComponent } from './login';
+import { routing } from './app.routing';
+import { AuthGuard } from '../app/service/AuthGuard';
+import { ErrorInterceptor } from '../app/helpers/error.intercepter';
 
 
 
@@ -59,6 +63,9 @@ import {
   NG_GAPI_CONFIG,
 } from "ng-gapi";
 import { BloggerService } from './service/BloggerService';
+import { AlertService } from './service/alert.service';
+import { JwtInterceptor } from './helpers/jwt.interceptor';
+import { AlertComponent } from './directives/alert.component';
 
 
   let gapiClientConfig: NgGapiClientConfig = {
@@ -75,10 +82,11 @@ import { BloggerService } from './service/BloggerService';
 
   entryComponents: [AppComponent, PerformActionDialog],
   declarations: [
-    AppComponent,PerformActionDialog,PostCarouselConfig
+    AppComponent, HomeComponent, AlertComponent, LoginComponent,PerformActionDialog
   ],
   imports: [
     BrowserModule,
+    routing,
     NgbModule,
     FlexLayoutModule,
     BrowserAnimationsModule,
@@ -167,8 +175,13 @@ import { BloggerService } from './service/BloggerService';
   ],
  
 
-  providers: [UserService, BloggerService],
-  bootstrap: [AppComponent],
+  providers: [ AuthGuard,
+    AlertService,
+    UserService,
+    BloggerService,
+    { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true} ,
+      { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true }],  
+bootstrap: [AppComponent],
 
 })
 export class AppModule { }

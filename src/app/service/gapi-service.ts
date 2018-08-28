@@ -3,6 +3,7 @@ import * as _ from "lodash";
 import {GoogleAuthService} from "ng-gapi/lib/GoogleAuthService";
 import GoogleUser = gapi.auth2.GoogleUser;
 import GoogleAuth = gapi.auth2.GoogleAuth;
+import { Router, ActivatedRoute } from '@angular/router';
 
 @Injectable()
 export class UserService {
@@ -10,7 +11,9 @@ export class UserService {
     private user: GoogleUser = undefined;
 
     constructor(private googleAuthService: GoogleAuthService,
-                private ngZone: NgZone) {
+                private ngZone: NgZone,       
+                private route: ActivatedRoute,
+                private router: Router) {
     }
 
     public setUser(user: GoogleUser): void {
@@ -32,7 +35,7 @@ export class UserService {
     public signIn() {
         this.googleAuthService.getAuth().subscribe((auth) => {
            
-            
+            console.log ('got authorization');
             auth.signIn().then(res => this.signInSuccessHandler(res), err => this.signInErrorHandler(err));
         });
     }
@@ -60,10 +63,11 @@ export class UserService {
         this.ngZone.run(() => {
             this.user = res;
 
-
+            console.log ('setting token in session');
             sessionStorage.setItem(
-                UserService.SESSION_STORAGE_KEY, res.getAuthResponse().access_token
-            );
+                UserService.SESSION_STORAGE_KEY, res.getAuthResponse().access_token);
+                this.router.navigate(['/home']);
+
 
         });
     }
