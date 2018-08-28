@@ -207,7 +207,7 @@ export class HomeComponent {
   public getPosts(id: string, maxSize: string) {
 
         console.log ('loading posts');
-       this.bs.getPosts(this.userService.getToken(), id, maxSize).subscribe ((res) => {
+       this.bs.getPosts(id, maxSize).subscribe ((res) => {
 
          console.log ('size: ' + res.items.length);
 
@@ -282,7 +282,7 @@ export class HomeComponent {
 
       console.log('starting to update post: '+post.id);
       
-      this.bs.updatePost(this.userService.getToken(),post).subscribe((res=>{
+      this.bs.updatePost(post).subscribe((res=>{
         this.snackBar.open('succesfully updated post', null, {
           duration: 2000,
         });
@@ -298,7 +298,7 @@ export class HomeComponent {
 
         console.log('starting to create new post: ');
       
-        this.bs.createPost(this.userService.getToken(),post).subscribe((res=>{
+        this.bs.createPost(post).subscribe((res=>{
         this.snackBar.open('succesfully created post', null, {
           duration: 2000,
         });
@@ -319,7 +319,7 @@ export class HomeComponent {
      
       console.log('starting to delete post: '+post.id);
       
-      this.bs.deletePost(this.userService.getToken(),post).subscribe((res=>{
+      this.bs.deletePost(post).subscribe((res=>{
         this.snackBar.open('succesfully deleted post', null, {
           duration: 2000,
         });
@@ -335,7 +335,7 @@ export class HomeComponent {
     public getPost(id: string,postId: string) {
 
           console.log ('loading post');
-           this.bs.getPost(this.userService.getToken(),id,postId).subscribe ((res)=>{
+           this.bs.getPost(id,postId).subscribe ((res)=>{
             this.post = res;
             console.log (this.post);
      

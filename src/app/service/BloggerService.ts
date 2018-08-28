@@ -40,13 +40,8 @@ public getBlog(id : string): Observable<Blog> {
   
 }
 
-public getPosts(authtoken: string,id : string,maxSize: string): Observable<Posts> {
+public getPosts(id : string,maxSize: string): Observable<Posts> {
 
-  if (!authtoken)
-  {
-    console.log('dont do call is no bearer token');
-    return null;
-  }
 
   console.log ('load posts at time: '  + new Date().toString());
 
@@ -58,9 +53,7 @@ public getPosts(authtoken: string,id : string,maxSize: string): Observable<Posts
   return this.http.get<Posts>(url,
     {
 
-    headers: new HttpHeaders({
-          Authorization: `Bearer ${authtoken}`
-      } ), params : new HttpParams().set('maxResults',maxSize)
+    headers: new HttpHeaders(), params : new HttpParams().set('maxResults',maxSize)
 
   });
   
@@ -81,13 +74,7 @@ public getPost(blogId : string,postId: string): Observable<PostWithContent> {
   
 }
 
-public updatePost(authtoken: string, post: PostWithContent): Observable<PostWithContent> {
-
-  if (!authtoken)
-  {
-    console.log('dont do call is no bearer token');
-    return null;
-  }
+public updatePost(post: PostWithContent): Observable<PostWithContent> {
 
   console.log ('update post: '  + new Date().toString());
 
@@ -99,7 +86,6 @@ public updatePost(authtoken: string, post: PostWithContent): Observable<PostWith
 
   return this.http.put<PostWithContent>(url, JSON.stringify(post), {
     headers: new HttpHeaders({
-      'Authorization':'Bearer '+authtoken,
       'Content-Type':'application/json'
 
   })
@@ -107,13 +93,8 @@ public updatePost(authtoken: string, post: PostWithContent): Observable<PostWith
   
 }
 
-public deletePost(authtoken: string, post: PostWithContent): Observable<any> {
+public deletePost(post: PostWithContent): Observable<any> {
 
-  if (!authtoken)
-  {
-    console.log('dont do call is no bearer token');
-    return null;
-  }
 
   console.log ('delete post id: '  + post.id + ' ' + new Date().toString());
 
@@ -125,7 +106,6 @@ public deletePost(authtoken: string, post: PostWithContent): Observable<any> {
 
   return this.http.delete<any>(url, {
     headers: new HttpHeaders({
-      'Authorization':'Bearer '+authtoken,
       'Content-Type':'application/json'
 
   })
@@ -133,14 +113,7 @@ public deletePost(authtoken: string, post: PostWithContent): Observable<any> {
   
 }
 
-public createPost(authtoken: string, post: PostWithContent): Observable<PostWithContent> {
-
-  if (!authtoken)
-  {
-    console.log('dont do call is no bearer token');
-    return null;
-  }
-
+public createPost(post: PostWithContent): Observable<PostWithContent> {
 
  
   let url = this.BLOGGER_API_URL+post.blog.id+'/posts';
@@ -158,7 +131,6 @@ public createPost(authtoken: string, post: PostWithContent): Observable<PostWith
   `,
     {
     headers: new HttpHeaders({
-      'Authorization':'Bearer '+authtoken,
       'Content-Type':'application/json'
   })
 });
