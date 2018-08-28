@@ -225,13 +225,6 @@ export interface Post {
 
 }
 
-export interface NewPost {
-  kind: string;
-  blog: Blog;
-  title: string;
-  content: string;
-
-}
 
 export interface PostWithContent extends Post {
   content: string;

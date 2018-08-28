@@ -1,26 +1,36 @@
 
 
 <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
-<mat-toolbar color="primary">
-        <button style="width:100px;" mat-stroked-button  mat-button *ngIf="!isLoggedIn()" (click)="doLogin()" >Login</button>
-        <button  style="width:100px;" mat-stroked-button mat-button *ngIf="isLoggedIn()" (click)="doLogout()" >Logout</button>
-    <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;My Application</span>
-  </mat-toolbar>
 
-  <br/>
-      <br/>
+<button  mat-menu-item *ngIf="!isLoggedIn()" (click)="doLogin()" >Login</button>
+
+
+
 
 
   <div *ngIf="isLoggedIn() && blogs">
 
- 
-            <mat-form-field>
-                <mat-select  (selectionChange)="selectBlogEvent($event)" (value)="selectedBlog" placeholder="Available blogs">
-                  <mat-option *ngFor = "let blog of blogs.items" [value]="blog.id">
-                    {{blog.name}}
-                  </mat-option>
-                </mat-select>
-              </mat-form-field>
+    <div *ngIf="blogs.items">
+
+
+        <button mat-button 
+  [matMenuTriggerFor]="blogMenu" 
+  (mouseenter)="openMyMenu()">
+  Menu
+</button>
+<mat-menu #blogMenu="matMenu" overlapTrigger="false">
+  <span (mouseleave)="closeMyMenu()">
+
+    <div *ngFor="let blog of blogs.items">
+    <button (click)="selectBlog(blog.id)" mat-menu-item>{{blog.name}}</button>
+  </div>
+  <button  mat-menu-item *ngIf="isLoggedIn()" (click)="doLogout()" >Logout</button>
+  </span>
+</mat-menu>
+
+
+      </div>
+        
 
         
     <div *ngIf="!blogs.items">
@@ -36,7 +46,64 @@
     
   </div>
 
+  <br/>
+  <br/>
+
+
+
 <div *ngIf="isLoggedIn() && blog">
+
+    <div *ngIf="viewMode">
+
+
+      <div *ngIf="post">
+
+
+
+        <mat-card class="example-card" (swipeleft)="swipeCard('swipeleft')" (swiperight)="swipeCard('swiperight')">
+            <mat-card-actions>
+                <button  [disabled]="postIndex==0" (click)="gotoPreviousPost()" mat-button>Previous</button>
+                <button [disabled]="postIndex == posts.items.length"(click)="gotoNextPost()" mat-button>Next</button >
+                  <button (click)="editCurrentPost()" mat-button>Edit</button >
+
+                    <button [disabled]="!_editCurrentPost" (click)="openSaveDialog();editCurrentPost()" mat-button>Save</button>
+                    <button (click)="openDeleteDialog()" mat-button>Delete</button>
+
+              </mat-card-actions>
+            <mat-card-header>
+              <mat-card-title> {{post.title}}</mat-card-title>
+
+            </mat-card-header>
+
+            <mat-card-content>
+
+                  <div [innerHTML]="safePostContent" style="max-height:400px;overflow-y: scroll;overflow-x:hidden; "></div>
+
+            </mat-card-content>
+            
+          
+          </mat-card>
+
+          <div *ngIf="_editCurrentPost">
+
+            <br/>
+            <br/>
+
+             <mat-form-field>
+              <input matInput placeholder="Title" [(ngModel)]="post.title"/>
+              </mat-form-field>
+
+          <app-ngx-editor style="max-height:600px;width:600px"  [spellcheck]="true" [(ngModel)]="post.content"></app-ngx-editor>
+
+        </div>
+          </div>
+          </div>
+   
+      </div>
+
+
+    <div *ngIf="!viewMode">
+
   Number of posts: &nbsp;
   {{blog.posts.totalItems}} <br/><br/>
 
@@ -143,18 +210,22 @@
                 
                 </mat-card>
 
-               
-          
- 
               
               </div>
             </div>
-
-
-  
          
       </div>
 
+      
+
+      </div>
+
+      
+
+    
+
+
+     
 
 
 

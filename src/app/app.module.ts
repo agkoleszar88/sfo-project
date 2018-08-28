@@ -9,6 +9,10 @@ import { FlexLayoutModule } from "@angular/flex-layout";
 import { NgxEditorModule } from 'ngx-editor';
 import {AngularFontAwesomeModule} from 'angular-font-awesome';
 import { PerformActionDialog } from './app.component';
+import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
+import { PostCarouselConfig } from './post-carousel';
+
+
 
 import {
   
@@ -58,7 +62,7 @@ import { BloggerService } from './service/BloggerService';
 
 
   let gapiClientConfig: NgGapiClientConfig = {
-    client_id: "980468360399-ce7p02aauu23v81o778fnsqsaf023j2m.apps.googleusercontent.com",
+    client_id: "980468360399-4461jk5letcrkalphrbaef75bm7eohsu.apps.googleusercontent.com",
     discoveryDocs: ["https://analyticsreporting.googleapis.com/$discovery/rest?version=v4"],
     scope: [
         "https://www.googleapis.com/auth/blogger"
@@ -71,10 +75,11 @@ import { BloggerService } from './service/BloggerService';
 
   entryComponents: [AppComponent, PerformActionDialog],
   declarations: [
-    AppComponent,PerformActionDialog
+    AppComponent,PerformActionDialog,PostCarouselConfig
   ],
   imports: [
     BrowserModule,
+    NgbModule,
     FlexLayoutModule,
     BrowserAnimationsModule,
     FormsModule,

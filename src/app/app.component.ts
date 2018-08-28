@@ -6,8 +6,8 @@ import {
 } from "ng-gapi";
 
 import { UserService } from './service/gapi-service';
-import { BloggerService,Blogs,Blog,Post, PostWithContent } from './service/BloggerService';
-import { MatSnackBar,MatTableDataSource, MatPaginator, MatSort} from '@angular/material';
+import { BloggerService,Blogs,Blog,Post,Posts, PostWithContent } from './service/BloggerService';
+import { MatSnackBar,MatTableDataSource, MatPaginator, MatSort, MatMenuTrigger} from '@angular/material';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material';
 
 export interface DialogData {
@@ -19,13 +19,22 @@ export interface DialogData {
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css']
+  styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
 
 
   private paginator: MatPaginator;
   private sort: MatSort;
+
+  @ViewChild(MatMenuTrigger) trigger: MatMenuTrigger;
+
+  openMyMenu() {
+    this.trigger.openMenu();
+  } 
+  closeMyMenu() {
+    this.trigger.closeMenu();
+  }  
 
   @ViewChild(MatSort) set matSort(ms: MatSort) {
     this.sort = ms;
@@ -42,11 +51,24 @@ export class AppComponent {
 
   dataSource: MatTableDataSource <Post>;
 
+  viewMode: boolean = true;
+
+  _editCurrentPost: boolean = false;
+
+  mode: string = "View";
+  postIndex: number = 0;
+
+  showNavigationArrows = false;
+  showNavigationIndicators = false;
+
   _blogs: Blogs;
   selectedBlog: string;
   blog: Blog;
   post: PostWithContent;
-  postContent: SafeHtml;
+  safePostContent : SafeHtml;
+  posts: Posts;
+
+  SWIPE_ACTION = { LEFT: 'swipeleft', RIGHT: 'swiperight' };
 
   editorConfig = {
     editable: true,
@@ -81,6 +103,8 @@ export class AppComponent {
 
   dialogRef.afterClosed().subscribe(() => {
     dialogRef.componentInstance.onPerformAction.unsubscribe();
+
+    this._editCurrentPost = false;
   // unsubscribe onAdd
   });
 
@@ -155,12 +179,13 @@ export class AppComponent {
     this.userService.signOut();
   }
 
-  public selectBlogEvent($event) {
-    console.log($event);
+  public selectBlog(id : string) {
+
  
-    console.log('loading blog for: '+$event.value);
-    this.blog = this.getBlog($event.value);
+    console.log('loading blog for: '+id);
+    this.blog = this.getBlog(id);
     this.post = null;
+    this.postIndex = 0;
     this.getPosts (this.blog.id,this.blog.posts.totalItems);
   }
 
@@ -168,8 +193,7 @@ export class AppComponent {
 
       console.log ('loading blogs');
      this.bs.getBlogs(this.userService.getToken()).subscribe ((res)=>{
-        this._blogs = res;
-      
+        this._blogs = res;  
       });
 
   }
@@ -178,15 +202,79 @@ export class AppComponent {
 
         console.log ('loading posts');
        this.bs.getPosts(this.userService.getToken(),id,maxSize).subscribe ((res)=>{
-   
 
          console.log ('size: '+res.items.length);
+
+         this.posts = res;
          
           this.dataSource = new MatTableDataSource(res.items);
+
+            this.bs.getPost(this.userService.getToken(),id,this.posts.items[0].id).subscribe ((res1)=> {
+              console.log('loaded post: '+res1.id);
+              this.post = res1;
+              this.postIndex = 0;
+              this.safePostContent = this.sanitizer.bypassSecurityTrustHtml(this.post.content);
+
+            })
         });
 
     }
 
+    public gotoPreviousPost ()
+    {
+      if (this.postIndex>0)
+      {
+        console.log('previous post');
+        this.postIndex -=1;
+        this.bs.getPost(this.userService.getToken(),this.blog.id,this.posts.items[this.postIndex].id).subscribe ((res1)=> {
+          console.log('loaded post: '+res1.id);
+          this.post = res1;
+          this.safePostContent = this.sanitizer.bypassSecurityTrustHtml(this.post.content);
+
+        })
+      }
+
+    }
+
+    public gotoNextPost ()
+    {
+      if (this.postIndex < this.posts.items.length)
+      {
+        console.log('next post');
+        this.postIndex +=1;
+        this.bs.getPost(this.userService.getToken(),this.blog.id,this.posts.items[this.postIndex].id).subscribe ((res1)=> {
+          console.log('loaded post: '+res1.id);
+          this.post = res1;
+          this.safePostContent = this.sanitizer.bypassSecurityTrustHtml(this.post.content);
+
+        })
+      }
+
+    }
+
+    swipeCard(action: string) {
+      
+      console.log ('swiping '+action);
+
+      if (action === this.SWIPE_ACTION.RIGHT) {
+         this.gotoNextPost();
+      }
+
+      // swipe left, previous avatar
+      if (action === this.SWIPE_ACTION.LEFT) {
+          this.gotoPreviousPost();
+      }
+
+      this._editCurrentPost = false;
+
+  }
+
+  editCurrentPost ()
+  {
+    console.log ('editing current post');
+    this._editCurrentPost = true;
+    
+  }
 
     public updatePost (post: PostWithContent) {
 
@@ -260,8 +348,6 @@ export class AppComponent {
 
     
           console.log ('loading blog');
-
-
 
           for (let blog of this._blogs.items)
           {
@@ -353,6 +439,7 @@ export class PerformActionDialog {
   }
 
 }
+
 
 
 
