@@ -53,7 +53,7 @@ Menu
           <mat-card-actions>
               <button  [disabled]="postIndex==0" (click)="gotoPreviousPost()" mat-button>Previous</button>
               <button [disabled]="postIndex == posts.items.length"(click)="gotoNextPost()" mat-button>Next</button >
-                <button (click)="editCurrentPost()" mat-button>Edit</button >
+                <button [disabled]="_editCurrentPost" (click)="editCurrentPost()" mat-button>Edit</button >
 
                   <button [disabled]="!_editCurrentPost" (click)="openSaveDialog();editCurrentPost()" mat-button>Save</button>
                   <button (click)="openDeleteDialog()" mat-button>Delete</button>

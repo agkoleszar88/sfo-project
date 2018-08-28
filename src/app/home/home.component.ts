@@ -186,6 +186,8 @@ export class HomeComponent {
     this.blog = this.getBlog(id);
     this.post = null;
     this.postIndex = 0;
+    this.viewMode = true;
+    this._editCurrentPost = false;
     this.getPosts (this.blog.id, this.blog.posts.totalItems);
   }
 
@@ -232,6 +234,8 @@ export class HomeComponent {
         this.bs.getPost(this.blog.id, this.posts.items[this.postIndex].id).subscribe ((res1)=> {
           console.log('loaded post: ' + res1.id);
           this.post = res1;
+
+          this._editCurrentPost = false;
           this.safePostContent = this.sanitizer.bypassSecurityTrustHtml(this.post.content);
 
         });
@@ -246,6 +250,7 @@ export class HomeComponent {
         this.bs.getPost(this.blog.id, this.posts.items[this.postIndex].id).subscribe ((res1)=> {
           console.log('loaded post: ' + res1.id);
           this.post = res1;
+          this._editCurrentPost = false;
           this.safePostContent = this.sanitizer.bypassSecurityTrustHtml(this.post.content);
 
         });

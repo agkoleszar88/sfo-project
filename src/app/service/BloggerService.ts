@@ -1,8 +1,6 @@
 import { HttpClient, HttpHeaders, HttpParams} from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import {Video} from '../app-types';
-import {map} from 'rxjs/operators';
 
 
 @Injectable({
@@ -15,7 +13,6 @@ export class BloggerService {
   constructor(private http: HttpClient) { }
 
 
-  
   public getBlogs(): Observable<Blogs> {
 
     console.log ('load blogs at time: '  + new Date().toString());

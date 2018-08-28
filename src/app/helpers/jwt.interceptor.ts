@@ -39,6 +39,7 @@ export class JwtInterceptor implements HttpInterceptor {
 
         if (!token) {
             console.log ('no token so cant add header');
+            // redirect to login page
         }
 
         return next.handle(request);
