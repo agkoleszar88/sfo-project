@@ -160,7 +160,7 @@ export interface Post {
   title: string;
   author: Author;
   replies: Replies;
-
+  content: string;
 }
 
 
@@ -179,7 +179,7 @@ export interface Posts {
 
 export interface Blogs {
   kind: string;
-  items: Blog []
+  items: Blog [];
 }
 
 export interface Blog {

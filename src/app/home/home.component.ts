@@ -214,13 +214,13 @@ export class HomeComponent {
          console.log ('size: ' + res.items.length);
 
          this.posts = res;
+         console.log (res);
           this.dataSource = new MatTableDataSource(res.items);
 
             this.bs.getPost( id, this.posts.items[0].id).subscribe ((res1)=> {
               console.log('loaded post: ' + res1.id);
               this.post = res1;
               this.postIndex = 0;
-              this.safePostContent = this.sanitizer.bypassSecurityTrustHtml(this.post.content);
 
             });
         });
@@ -241,6 +241,11 @@ export class HomeComponent {
         });
       }
 
+    }
+
+    public getSafeContent(post: Post): SafeHtml {
+
+        return this.sanitizer.bypassSecurityTrustHtml (post.content);
     }
 
     public gotoNextPost () {

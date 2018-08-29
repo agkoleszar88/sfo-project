@@ -44,49 +44,25 @@ Menu
 
   <div *ngIf="viewMode">
 
+        <div fxLayout="row" fxLayoutWrap>
 
-    <div *ngIf="post">
+            <div *ngIf="posts && posts.items">
 
-
-
-      <mat-card class="example-card" (swipeleft)="swipeCard('swipeleft')" (swiperight)="swipeCard('swiperight')">
-          <mat-card-actions>
-              <button  [disabled]="postIndex==0" (click)="gotoPreviousPost()" mat-button>Previous</button>
-              <button [disabled]="postIndex == posts.items.length"(click)="gotoNextPost()" mat-button>Next</button >
-                <button [disabled]="_editCurrentPost" (click)="editCurrentPost()" mat-button>Edit</button >
-
-                  <button [disabled]="!_editCurrentPost" (click)="openSaveDialog();editCurrentPost()" mat-button>Save</button>
-                  <button (click)="openDeleteDialog()" mat-button>Delete</button>
-
-            </mat-card-actions>
-          <mat-card-header>
-            <mat-card-title> {{post.title}}</mat-card-title>
-
-          </mat-card-header>
-
-          <mat-card-content>
-
-                <div [innerHTML]="safePostContent" style="max-height:400px;overflow-y: scroll;overflow-x:hidden; "></div>
-
-          </mat-card-content>
-          
-        
+        <mat-card *ngFor="let post of posts.items" fxFlex.lg="33" fxFlex.lt-lg="50" fxFlex.xs="100">
+                <mat-card-header>
+                        <mat-card-title> {{post.title}}</mat-card-title>
+            
+                      </mat-card-header>
+            
+                      <mat-card-content>
+            
+                            <div [innerHTML]="getSafeContent(post)" style="overflow-y: scroll;overflow-x:hidden; "></div>
+            
+                      </mat-card-content>
         </mat-card>
-
-        <div *ngIf="_editCurrentPost">
-
-          <br/>
-          <br/>
-
-           <mat-form-field>
-            <input matInput placeholder="Title" [(ngModel)]="post.title"/>
-            </mat-form-field>
-
-        <app-ngx-editor style="max-height:600px;width:600px"  [spellcheck]="true" [(ngModel)]="post.content"></app-ngx-editor>
-
-      </div>
+    </div>
         </div>
-        </div>
+
  
     </div>
 
