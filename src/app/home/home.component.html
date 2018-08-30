@@ -1,190 +1,251 @@
-
-
 <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
 
 
-<button mat-button 
-[matMenuTriggerFor]="blogMenu" 
-(mouseenter)="openMyMenu()">
-Menu
-</button>
 
-<mat-menu #blogMenu="matMenu" overlapTrigger="false">
-<span (mouseleave)="closeMyMenu()">
-  <div *ngIf="blogs">
-  <div *ngFor="let blog of blogs.items">
-  <button (click)="selectBlog(blog.id)" mat-menu-item>{{blog.name}}</button>
-</div>
-</div>
-<button  mat-menu-item *ngIf="!isLoggedIn()" (click)="doLogin()" >Login</button>
+<div style="height: 100vh;"> 
+    <mat-toolbar color="primary">
 
-<button  mat-menu-item *ngIf="isLoggedIn()" (click)="doLogout()" >Logout</button>
-</span>
-</mat-menu>
+        <div>
+
+        <button fxShow="false" fxShow.xs="true"   mat-button (click)="sidenav.toggle()">
+          Menu
+          <mat-icon>list</mat-icon>
+        </button>
+      </div>
   
-  <div *ngIf="blogs && !blogs.items">
-      No blogs available.
+      <a mat-button class="companyName" routerLink="/">
+        <span>AGK Blogs</span>
+      </a>
+      <span class="example-spacer"></span>
+      <div fxShow="true" fxHide.xs>
+
+        
+          <mat-menu #topBlogMenu="matMenu">
+              <div *ngIf="blogs">
+                  <div *ngFor="let blog of blogs.items">
+                      <button  (click)="selectBlog(blog.id)" mat-menu-item>{{blog.name}}</button>
+                  </div>
+                </div>
+
+            </mat-menu>
+            
+            <button mat-button  [matMenuTriggerFor]="topBlogMenu">
+              Blogs
+              <mat-icon>list</mat-icon>
+
+            </button>
+            <button  *ngIf="isLoggedIn()" (click) = "doLogout()"  mat-button>Logout</button>
+            <button  *ngIf="!isLoggedIn()" (click) = "doLogin()"  mat-button>Login</button>
+      
+
+      </div>
+  
+    </mat-toolbar>
+    <mat-sidenav-container fxFlexFill class="example-container">
+  
+      <mat-sidenav color="primary" #sidenav fxLayout="column" mode="over"  open="false" >
+       
+        <div  fxLayout="column">
+
+            <mat-menu #sideMenu="matMenu">
+
+              <br/>
+              <br/>
+
+              <div *ngIf="blogs">
+                <div *ngFor="let blog of blogs.items">
+                    <button   (click)="selectBlog(blog.id);closeSideNav()"  mat-menu-item>{{blog.name}}</button>
+                </div>
+              </div>
+ 
+              </mat-menu>
+              
+              <button  mat-button [matMenuTriggerFor]="sideMenu">
+                  &nbsp;&nbsp;&nbsp;Blogs
+                <mat-icon>list</mat-icon>
+              </button>
+
+              <button  *ngIf="isLoggedIn()" (click) = "doLogout()" mat-button>Logout</button>
+              <button  *ngIf="!isLoggedIn()" (click) = "doLogin()" mat-button>Login</button>
+
+
+          
+        </div>
+      </mat-sidenav>
+      <mat-sidenav-content fxFlexFill>
+      
+
+          <div *ngIf="blogs && !blogs.items">
+              No blogs available.
+          </div>
+        
+        
+        <div *ngIf="isLoggedIn() && !blogs">
+        
+              <mat-spinner></mat-spinner>
+          
+             Loading blogs...
+          
+        </div>
+        
+        <br/>
+        <br/>
+
+        
+        
+        
+        <div *ngIf="isLoggedIn() && blog">
+        
+          <div *ngIf="viewMode">
+
+            <h2>{{blog.name}}</h2>
+        
+        
+                    <div *ngIf="posts && posts.items">
+        
+                      <mat-card *ngFor="let post of posts.items">
+                            <mat-card-header>
+                                <mat-card-title> {{post.title}}</mat-card-title>
+                    
+                              </mat-card-header>
+                              <mat-card-actions>
+                                  <button  [disabled]="_editCurrentPost" mat-button (click)="editCurrentPost()">
+                                      <mat-icon>edit</mat-icon>
+                                    </button>
+
+                                    <button [disabled]="!_editCurrentPost" mat-button (click)="openSaveDialog(post)">
+                                        <mat-icon>save</mat-icon>
+                                      </button>
+                                <button mat-button (click)="openDeleteDialog(post)">
+                                  <mat-icon>delete</mat-icon>
+                                </button>
+                              </mat-card-actions>
+                    
+                              <mat-card-content>
+                    
+                                    <div [innerHTML]="getSafeContent(post)" style="overflow-y: scroll;overflow-x:hidden; "></div>
+                    
+                              </mat-card-content>
+                      </mat-card>
+                  </div>
+        
+                  <div *ngIf="!posts">
+        
+                      <mat-spinner></mat-spinner>
+          
+                      Loading posts...
+              </div>
+        
+         
+            </div>
+            </div>
+
+            <!--
+        
+        
+          <div *ngIf="!viewMode">
+        
+        Number of posts: &nbsp;
+        {{blog.posts.totalItems}} <br/><br/>
+        
+            <button (click)="createNewPost()" mat-flat-button>New</button>
+        
+        
+           <div *ngIf="isLoggedIn() && !blog">
+        
+              <mat-spinner></mat-spinner>
+          
+             Loading blog and posts...
+             </div>
+        
+             <div *ngIf="isLoggedIn() &&  dataSource.data != null">
+             <mat-form-field>
+                <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Filter">
+              </mat-form-field>
+              </div>
+        
+        
+        
+        
+        <div *ngIf="isLoggedIn() &&  dataSource.data != null">
+        
+        
+              
+            <div  style="overflow:scroll; height:400px;"  class="mat-elevation-z8">
+        
+                <mat-paginator [pageSizeOptions]="[5, 10, 20,50,100]" showFirstLastButtons></mat-paginator>
+            
+            <table mat-table [dataSource]="dataSource" matSort class="mat-elevation-z8">
+              
+                <ng-container matColumnDef="title">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header> Title </th>
+                  <td width="400px" mat-cell *matCellDef="let row"> {{row.title}} </td>
+                </ng-container>
+        
+                <ng-container matColumnDef="author">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header> Author </th>
+                    <td width="100px" mat-cell *matCellDef="let row"> {{row.author.displayName}} </td>
+                  </ng-container>
+        
+                  <ng-container matColumnDef="published">
+                      <th mat-header-cell *matHeaderCellDef mat-sort-header> Published </th>
+                      <td width="200px" mat-cell *matCellDef="let row"> {{row.published}} </td>
+                    </ng-container>
+        
+          
+              
+                <tr mat-header-row *matHeaderRowDef="displayColumns"></tr>
+        
+                <tr mat-row *matRowDef="let row; columns: displayColumns;"  [ngClass]="{'highlight': selectedRowIndex == row.id}"
+                (click)="highlight(row)"></tr>
+               
+              </table>
+        
+            </div>
+              
+        
+      
+                  <div  *ngIf="isLoggedIn() && post">            
+         
+                      <mat-card class="example-card">
+                        <mat-card-header>
+                          <mat-card-title> {{blog.name}}</mat-card-title>
+        
+                        </mat-card-header>
+                    
+                        <mat-card-content>
+        
+                            <div class="fields-container">
+                                <mat-form-field>
+                                  <input matInput placeholder="Title" [(ngModel)]="post.title"/>
+                                  </mat-form-field>
+           
+                          
+                              </div>
+                            <app-ngx-editor style="max-height:600px" [config]="editorConfig" [spellcheck]="true" [(ngModel)]="post.content"></app-ngx-editor>
+        
+        
+                        </mat-card-content>
+                        <mat-card-actions>
+                            <button (click)="openSaveDialog()" mat-button>Save</button>
+                            <button (click)="openDeleteDialog()" mat-button>Delete</button>
+                          </mat-card-actions>
+                      
+                      </mat-card>
+        
+                  </div>
+               
+ 
+                -->
+
+      </mat-sidenav-content>
+  
+    </mat-sidenav-container>
   </div>
 
-
-<div *ngIf="isLoggedIn() && !blogs">
-
-      <mat-spinner></mat-spinner>
   
-     Loading blogs...
   
-</div>
-
-<br/>
-<br/>
-
-
-
-<div *ngIf="isLoggedIn() && blog">
-
-  <div *ngIf="viewMode">
-
-        <div fxLayout="row" fxLayoutWrap>
-
-            <div *ngIf="posts && posts.items">
-
-        <mat-card *ngFor="let post of posts.items" fxFlex.lg="33" fxFlex.lt-lg="50" fxFlex.xs="100">
-                <mat-card-header>
-                        <mat-card-title> {{post.title}}</mat-card-title>
-            
-                      </mat-card-header>
-            
-                      <mat-card-content>
-            
-                            <div [innerHTML]="getSafeContent(post)" style="overflow-y: scroll;overflow-x:hidden; "></div>
-            
-                      </mat-card-content>
-        </mat-card>
-    </div>
-        </div>
-
- 
-    </div>
-
-
-  <div *ngIf="!viewMode">
-
-Number of posts: &nbsp;
-{{blog.posts.totalItems}} <br/><br/>
-
-    <button (click)="createNewPost()" mat-flat-button>New</button>
-
-
-   <div *ngIf="isLoggedIn() && !blog">
-
-      <mat-spinner></mat-spinner>
   
-     Loading blog and posts...
-     </div>
-
-     <div *ngIf="isLoggedIn() &&  dataSource.data != null">
-     <mat-form-field>
-        <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Filter">
-      </mat-form-field>
-      </div>
-
-
-
-     <div class="container"
-     fxLayout
-     fxLayout.xs="column"
-     fxLayoutAlign="left"
-     fxLayoutGap="10px"
-     fxLayoutGap.xs="0">
-
-     <div fxFlex="50%">
-
-<div *ngIf="isLoggedIn() &&  dataSource.data != null">
-
-
-      
-    <div  style="overflow:scroll; height:400px;"  class="mat-elevation-z8">
-
-        <mat-paginator [pageSizeOptions]="[5, 10, 20,50,100]" showFirstLastButtons></mat-paginator>
-    
-    <table mat-table [dataSource]="dataSource" matSort class="mat-elevation-z8">
-
-      
-
-        <!--- Note that these columns can be defined in any order.
-              The actual rendered columns are set as a property on the row definition" -->
-      
-        <!-- Position Column -->
-        <ng-container matColumnDef="title">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header> Title </th>
-          <td width="400px" mat-cell *matCellDef="let row"> {{row.title}} </td>
-        </ng-container>
-
-        <ng-container matColumnDef="author">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header> Author </th>
-            <td width="100px" mat-cell *matCellDef="let row"> {{row.author.displayName}} </td>
-          </ng-container>
-
-          <ng-container matColumnDef="published">
-              <th mat-header-cell *matHeaderCellDef mat-sort-header> Published </th>
-              <td width="200px" mat-cell *matCellDef="let row"> {{row.published}} </td>
-            </ng-container>
-
-  
-      
-        <tr mat-header-row *matHeaderRowDef="displayColumns"></tr>
-
-        <tr mat-row *matRowDef="let row; columns: displayColumns;"  [ngClass]="{'highlight': selectedRowIndex == row.id}"
-        (click)="highlight(row)"></tr>
-       
-      </table>
-
-    </div>
-      
-
-</div>
-</div>
-
-
-<div fxFlex="50%">
-          <div  *ngIf="isLoggedIn() && post">            
- 
-              <mat-card class="example-card">
-                <mat-card-header>
-                  <mat-card-title> {{blog.name}}</mat-card-title>
-
-                </mat-card-header>
-            
-                <mat-card-content>
-
-                    <div class="fields-container">
-                        <mat-form-field>
-                          <input matInput placeholder="Title" [(ngModel)]="post.title"/>
-                          </mat-form-field>
-   
-                  
-                      </div>
-                    <app-ngx-editor style="max-height:600px" [config]="editorConfig" [spellcheck]="true" [(ngModel)]="post.content"></app-ngx-editor>
-
-
-                </mat-card-content>
-                <mat-card-actions>
-                    <button (click)="openSaveDialog()" mat-button>Save</button>
-                    <button (click)="openDeleteDialog()" mat-button>Delete</button>
-                  </mat-card-actions>
-              
-              </mat-card>
-
-            
-            </div>
-          </div>
-       
-    </div>
-
-    
-
-    </div>
-
     
 
   

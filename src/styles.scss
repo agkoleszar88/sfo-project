@@ -6,3 +6,108 @@
 @import "styles-reset.scss";
   
  @import "~@angular/material/prebuilt-themes/indigo-pink.css";
+
+body{
+    margin: 0%;
+}
+
+@media (min-width:320px)  {
+    .resizable-btn {
+
+        -webkit-border-radius: 3;
+     -moz-border-radius: 3;
+     border-radius: 3px;
+     
+     font-size: 30px !important;
+     padding: 7px 8px 7px 7px;
+     text-decoration: none;
+     margin-left: 3px;
+   
+     min-width: 600px;
+     min-height: 30px;
+     display: inline;
+   } /* smartphones, iPhone, portrait 480x320 phones */ }
+@media (min-width:481px)  { 
+    .resizable-btn {
+
+        -webkit-border-radius: 3;
+     -moz-border-radius: 3;
+     border-radius: 3px;
+     
+     font-size: 30px !important;
+     padding: 7px 8px 7px 7px;
+     text-decoration: none;
+     margin-left: 3px;
+   
+     min-width: 600px;
+     min-height: 30px;
+     display: inline;
+   }/* portrait e-readers (Nook/Kindle), smaller tablets @ 600 or @ 640 wide. */ }
+@media (min-width:641px)  { 
+    .resizable-btn {
+
+        -webkit-border-radius: 3;
+     -moz-border-radius: 3;
+     border-radius: 3px;
+     
+     font-size: 30px !important;
+     padding: 7px 8px 7px 7px;
+     text-decoration: none;
+     margin-left: 3px;
+   
+     min-width: 600px;
+     min-height: 30px;
+     display: inline;
+   }/* portrait tablets, portrait iPad, landscape e-readers, landscape 800x480 or 854x480 phones */ }
+@media (min-width:961px)  { 
+    .resizable-btn {
+
+        -webkit-border-radius: 3;
+     -moz-border-radius: 3;
+     border-radius: 3px;
+     
+     font-size: 30px !important;
+     padding: 7px 8px 7px 7px;
+     text-decoration: none;
+     margin-left: 3px;
+   
+     min-width: 600px;
+     min-height: 30px;
+     display: inline;
+   }/* tablet, landscape iPad, lo-res laptops ands desktops */ }
+@media (min-width:1025px) { \.resizable-btn {
+
+    -webkit-border-radius: 3;
+ -moz-border-radius: 3;
+ border-radius: 3px;
+ 
+ font-size: 30px !important;
+ padding: 7px 8px 7px 7px;
+ text-decoration: none;
+ margin-left: 3px;
+
+ min-width: 600px;
+ min-height: 30px;
+ display: inline;
+}/* big landscape tablets, laptops, and desktops */ }
+@media (min-width:1281px) { 
+    .resizable-btn {
+
+        -webkit-border-radius: 3;
+     -moz-border-radius: 3;
+     border-radius: 3px;
+     
+     font-size: 30px !important;
+     padding: 7px 8px 7px 7px;
+     text-decoration: none;
+     margin-left: 3px;
+   
+     min-width: 600px;
+     min-height: 30px;
+     display: inline;
+   }/* hi-res laptops and desktops */ }
+
+
+
+
+   

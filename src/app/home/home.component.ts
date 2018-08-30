@@ -7,7 +7,7 @@ import {
 
 import { UserService } from '../service/gapi-service';
 import { BloggerService,Blogs,Blog,Post,Posts, PostWithContent } from '../service/BloggerService';
-import { MatSnackBar,MatTableDataSource, MatPaginator, MatSort, MatMenuTrigger} from '@angular/material';
+import { MatSnackBar,MatTableDataSource, MatPaginator, MatSort, MatMenuTrigger, MatSidenav} from '@angular/material';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material';
 import { Router, ActivatedRoute } from '@angular/router';
 
@@ -23,7 +23,9 @@ export interface DialogData {
 export class HomeComponent {
 
 
-  @ViewChild(MatMenuTrigger) trigger: MatMenuTrigger;
+  @ViewChild('sidenav') sidenav: MatSidenav;
+
+  
   @ViewChild(MatSort) set matSort(ms: MatSort) {
     this.sort = ms;
     this.setDataSourceAttributes();
@@ -35,6 +37,7 @@ export class HomeComponent {
   }
 
   private paginator: MatPaginator;
+  private loadingBlog: boolean = false;
   private sort: MatSort;
 
   private loadingBlogs = false;
@@ -86,15 +89,17 @@ export class HomeComponent {
   this.dataSource = new MatTableDataSource(null);
   }
 
-  openMyMenu() {
-    this.trigger.openMenu();
+  openSideNav() {
+    this.sidenav.open();
   }
 
-  closeMyMenu() {
-    this.trigger.closeMenu();
+  closeSideNav() {
+ 
+    this.sidenav.close();
+    
   }
 
-  openSaveDialog(): void {
+  openSaveDialog(post: PostWithContent): void {
     const dialogRef = this.dialog.open(PerformActionDialog, {
       data : {'action': 'Save'},
       width: '250px'
@@ -104,7 +109,7 @@ export class HomeComponent {
     const sub = dialogRef.componentInstance.onPerformAction.subscribe(() => {
 
     console.log ('must save post');
-    this.updatePost(this.post);
+    this.updatePost(post);
 
   });
 
@@ -117,7 +122,7 @@ export class HomeComponent {
 
   }
 
-  openDeleteDialog(): void {
+  openDeleteDialog(_post: Post): void {
     const dialogRef = this.dialog.open(PerformActionDialog, {
       data : {'action': 'Delete'},
       width: '250px'
@@ -127,7 +132,7 @@ export class HomeComponent {
     const sub = dialogRef.componentInstance.onPerformAction.subscribe(() => {
 
     console.log ('must cancel post');
-    this.deletePost(this.post);
+    this.deletePost(_post);
 
   });
 
@@ -182,13 +187,20 @@ export class HomeComponent {
 
   public selectBlog(id: string) {
 
-    console.log('loading blog for: ' + id);
-    this.blog = this.getBlog(id);
-    this.post = null;
-    this.postIndex = 0;
-    this.viewMode = true;
-    this._editCurrentPost = false;
-    this.getPosts (this.blog.id, this.blog.posts.totalItems);
+    if (!this.loadingBlog)
+    {
+      this.loadingBlog = true;
+
+      console.log('loading blog for: ' + id);
+      this.blog = this.getBlog(id);
+      this.post = null;
+      this.postIndex = 0;
+      this.viewMode = true;
+      this._editCurrentPost = false;
+      this.getPosts (this.blog.id, this.blog.posts.totalItems);
+      this.loadingBlog = false;
+ 
+    }
   }
 
   public getBlogs() {
@@ -197,9 +209,10 @@ export class HomeComponent {
       if (!this.loadingBlogs)
       {
           this.loadingBlogs = true;
-      console.log ('loading blogs');
-     this.bs.getBlogs().subscribe ((res) => {
+        console.log ('loading blogs');
+        this.bs.getBlogs().subscribe ((res) => {
         this._blogs = res;
+        this.selectBlog (this._blogs.items[0].id);
         this.loadingBlogs = false;
       });
     }
