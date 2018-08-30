@@ -46,30 +46,30 @@
       <mat-sidenav color="primary" #sidenav fxLayout="column" mode="over"  open="false" >
        
         <div  fxLayout="column">
+                <button  mat-button (click)="closeSideNav()">
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <mat-icon>close</mat-icon>
+                      </button>
 
-            <mat-menu #sideMenu="matMenu">
-
-              <br/>
-              <br/>
-
-              <div *ngIf="blogs">
-                <div *ngFor="let blog of blogs.items">
-                    <button   (click)="selectBlog(blog.id);closeSideNav()"  mat-menu-item>{{blog.name}}</button>
-                </div>
-              </div>
- 
-              </mat-menu>
-              
-              <button  mat-button [matMenuTriggerFor]="sideMenu">
+              <button  mat-button  [matMenuTriggerFor]="sideMenu">
                   &nbsp;&nbsp;&nbsp;Blogs
                 <mat-icon>list</mat-icon>
               </button>
+              <mat-menu #sideMenu="matMenu" >
 
+                    <mat-list>
+                            <div *ngIf="blogs">
+                                    <div *ngFor="let blog of blogs.items">
+                                            <mat-list-item (click)="selectBlog(blog.id);closeSideNav()"> {{blog.name}} </mat-list-item>
+                                     </div>
+                            </div>
+
+                    </mat-list>                       
+              </mat-menu>
+              
               <button  *ngIf="isLoggedIn()" (click) = "doLogout()" mat-button>Logout</button>
-              <button  *ngIf="!isLoggedIn()" (click) = "doLogin()" mat-button>Login</button>
+            <button  *ngIf="!isLoggedIn()" (click) = "doLogin()" mat-button>Login</button>
 
-
-          
         </div>
       </mat-sidenav>
       <mat-sidenav-content fxFlexFill>

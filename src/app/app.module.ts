@@ -69,7 +69,7 @@ import { AlertComponent } from './directives/alert.component';
 
 
   let gapiClientConfig: NgGapiClientConfig = {
-    client_id: "980468360399-4461jk5letcrkalphrbaef75bm7eohsu.apps.googleusercontent.com",
+    client_id: "980468360399-v4m3ld1cahrur37eovu1d8snb9v9samr.apps.googleusercontent.com",
     discoveryDocs: ["https://analyticsreporting.googleapis.com/$discovery/rest?version=v4"],
     scope: [
         "https://www.googleapis.com/auth/blogger"
